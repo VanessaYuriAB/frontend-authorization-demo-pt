@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate, useLocation, redirect } from "react-router-dom";
 
 import Ducks from "./Ducks";
 import Login from "./Login";
@@ -15,29 +15,11 @@ import "./styles/App.css";
 
 
 function App() {
-  const navigate = useNavigate();
-
   const [userData, setUserData] = useState({ username: "", email: "" });
   const [isLoggedIn, setIsLoggedIn] = useState(false);  
 
-  useEffect(() => {
-    const jwt = getToken();
-
-    if (!jwt) {
-      return;
-    }
-
-    api
-      .getUserInfo(jwt)
-      .then(({ username, email }) => {
-        // Se a resposta for bem-sucedida, habilita o login do usuário, 
-        // salva seus dados no estado e redireciona para /ducks.
-        setIsLoggedIn(true);
-        setUserData({ username, email });
-        navigate("/ducks");
-      })
-      .catch(console.error);
-  }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Manipulador para inscrição de usuário 
   const handleRegistration = ({
@@ -75,41 +57,79 @@ function App() {
           setUserData(data.user); 
           // Habilita o login do usuário.
           setIsLoggedIn(true);
-          // Redireciona o usuário para /ducks.
-          navigate("/ducks");
+
+          // Depois do login, em vez de sempre acessar /ducks, 
+          // navega até o local armazenado no estado. Se
+          // não houver, redireciona para /ducks por padrão.
+          const redirectPath = location.state?.from?.pathname || "/ducks";
+          navigate(redirectPath);
         }        
       })
       .catch(console.error);
   };
 
+  // Efeito para persistir o login do usuário.
+  // Se houver um token salvo, busca as informações do usuário, atualiza o estado 
+  // de autenticação (habilitando o login), atualiza as informações do usuário 
+  // autenticado (salvando seus dados no estado do usuário) e redireciona para /ducks.
+  useEffect(() => {
+    const jwt = getToken();
+
+    if (!jwt) {
+      return;
+    }
+
+    api
+      .getUserInfo(jwt)
+      .then(({ username, email }) => {
+        setIsLoggedIn(true);
+        setUserData({ username, email });
+        // Redirecionamento definido em ProtectedRoute.
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <Routes>
+
       <Route path="/ducks" element={
         <ProtectedRoute isLoggedIn={isLoggedIn} >
           <Ducks />
         </ProtectedRoute>  
       } />
+
       <Route path="/my-profile" element={
         <ProtectedRoute isLoggedIn={isLoggedIn} >
           <MyProfile userData={userData} />
         </ProtectedRoute>
       } />
+
+      {/* Rotas /login e /register possuem a prop anonymous para 
+      redirecionar usuários autorizados (logados) até a rota raiz 
+      "/". */}
+
       <Route
         path="/login"
         element={
-          <div className="loginContainer">
-            <Login handleLogin={handleLogin} />
-          </div>
+          <ProtectedRoute isLoggedIn={isLoggedIn} anonymous >
+            <div className="loginContainer">
+              <Login handleLogin={handleLogin} />
+            </div>
+          </ProtectedRoute>  
         }
       />
+
       <Route
         path="/register"
         element={
-          <div className="registerContainer">
-            <Register handleRegistration={handleRegistration} />
-          </div>
+          <ProtectedRoute isLoggedIn={isLoggedIn} anonymous >
+            <div className="registerContainer">
+              <Register handleRegistration={handleRegistration} />
+            </div>
+          </ProtectedRoute>
         }
       />
+
       <Route path="*"
         element={
           isLoggedIn ? (
@@ -119,6 +139,7 @@ function App() {
           )
         }
       />
+
     </Routes>
   );
 }
