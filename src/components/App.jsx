@@ -11,7 +11,9 @@ import * as auth from "../utils/auth";
 
 import "./styles/App.css";
 
+
 function App() {
+  const [userData, setUserData] = useState({ username: "", email: "" });
   const [isLoggedIn, setIsLoggedIn] = useState(false);  
 
   const navigate = useNavigate();
@@ -31,6 +33,32 @@ function App() {
         .catch(console.error);
     }
   };
+
+  // Manipulador para login de usuário
+  const handleLogin = ({ username, password }) => {
+    // Se o nome do usuário ou a senha estiverem vazios, retorne sem enviar a solicitação à API.
+    if (!username || !password) {
+      return;
+    }
+
+    // Nome de usuário e a senha são os argumentos posicionais. 
+    // A função authorize é configurada para renomear `username` para `identifier`
+    // antes de enviar a solicitação ao servidor, pois é isso que a API espera.
+    auth.authorize(username, password)
+      .then((data) => {
+        // Verifica se um JWT está incluso antes de permitir o login do usuário.
+        if (data.jwt) {
+          // Salva os dados do usuário no estado.
+          setUserData(data.user); 
+          // Habilita o login do usuário.
+          setIsLoggedIn(true);
+          // Redireciona o usuário para /ducks.
+          navigate("/ducks");
+        }        
+      })
+      .catch(console.error);
+  };
+
   return (
     <Routes>
       <Route path="/ducks" element={
@@ -47,7 +75,7 @@ function App() {
         path="/login"
         element={
           <div className="loginContainer">
-            <Login />
+            <Login handleLogin={handleLogin} />
           </div>
         }
       />
