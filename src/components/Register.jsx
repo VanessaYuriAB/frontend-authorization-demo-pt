@@ -3,7 +3,7 @@ import { useState } from "react";
 import Logo from "./Logo";
 import "./styles/Register.css";
 
-const Register = () => {
+const Register = ({ handleRegistration }) => {
   const [data, setData] = useState({
     username: "",
     email: "",
@@ -19,11 +19,18 @@ const Register = () => {
     }));
   };
 
+  // Função de manipulador de envio: evita o comportamento padrão do navegador
+  // e chama handleRegistration, passando os dados de envio do formulário.
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleRegistration(data);
+  };
+
   return (
     <div className="register">
       <Logo title={"CryptoDucks"} />
       <p className="register__welcome">Por favor, registre-se</p>
-      <form className="register__form">
+      <form className="register__form" onSubmit={handleSubmit}>
         <label htmlFor="username">Nome de usuário:</label>
         <input
           id="username"
@@ -31,6 +38,7 @@ const Register = () => {
           type="text"
           value={data.username}
           onChange={handleChange}
+          autoComplete="off"
         />
         <label htmlFor="email">E-mail:</label>
         <input
@@ -39,6 +47,7 @@ const Register = () => {
           type="email"
           value={data.email}
           onChange={handleChange}
+          autoComplete="off"
         />
         <label htmlFor="password">Senha:</label>
         <input
@@ -47,6 +56,7 @@ const Register = () => {
           type="password"
           value={data.password}
           onChange={handleChange}
+          autoComplete="off"
         />
         <label htmlFor="confirmPassword">Confirme a senha:</label>
         <input
@@ -55,6 +65,7 @@ const Register = () => {
           type="password"
           value={data.confirmPassword}
           onChange={handleChange}
+          autoComplete="off"
         />
         <div className="register__button-container">
           <button type="submit" className="register__link">
@@ -64,7 +75,7 @@ const Register = () => {
       </form>
       <div className="register__signin">
         <p>Já é um membro?</p>
-        <Link to="login" className="register__login-link">
+        <Link to="/login" className="register__login-link">
           Faça o login
         </Link>
       </div>
