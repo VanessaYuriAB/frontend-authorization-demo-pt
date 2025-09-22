@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import Ducks from "./Ducks";
@@ -8,15 +8,36 @@ import Register from "./Register";
 import ProtectedRoute from "./ProtectedRoute";
 
 import * as auth from "../utils/auth";
+import { setToken, getToken } from "../utils/token";
+import * as api from "../utils/api";
 
 import "./styles/App.css";
 
 
 function App() {
+  const navigate = useNavigate();
+
   const [userData, setUserData] = useState({ username: "", email: "" });
   const [isLoggedIn, setIsLoggedIn] = useState(false);  
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    const jwt = getToken();
+
+    if (!jwt) {
+      return;
+    }
+
+    api
+      .getUserInfo(jwt)
+      .then(({ username, email }) => {
+        // Se a resposta for bem-sucedida, habilita o login do usuário, 
+        // salva seus dados no estado e redireciona para /ducks.
+        setIsLoggedIn(true);
+        setUserData({ username, email });
+        navigate("/ducks");
+      })
+      .catch(console.error);
+  }, []);
 
   // Manipulador para inscrição de usuário 
   const handleRegistration = ({
@@ -48,6 +69,8 @@ function App() {
       .then((data) => {
         // Verifica se um JWT está incluso antes de permitir o login do usuário.
         if (data.jwt) {
+          // Salva o token no armazenamento local.
+          setToken(data.jwt);
           // Salva os dados do usuário no estado.
           setUserData(data.user); 
           // Habilita o login do usuário.
