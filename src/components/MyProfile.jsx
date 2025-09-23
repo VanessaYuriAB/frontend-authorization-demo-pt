@@ -3,11 +3,12 @@ import "./styles/MyProfile.css";
 
 function MyProfile({
   userData = { username: "Nome de usuário aqui", email: "E-mail aqui" },
+  setIsLoggedIn
 }) {
   const { username, email } = userData;
   return (
     <>
-      <NavBar />
+      <NavBar setIsLoggedIn={setIsLoggedIn} />
       <div className="my-profile">
         <div className="my-profile__container">
           <div className="my-profile__header">

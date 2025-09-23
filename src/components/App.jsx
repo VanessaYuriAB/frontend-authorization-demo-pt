@@ -94,13 +94,13 @@ function App() {
 
       <Route path="/ducks" element={
         <ProtectedRoute isLoggedIn={isLoggedIn} >
-          <Ducks />
+          <Ducks setIsLoggedIn={setIsLoggedIn} />
         </ProtectedRoute>  
       } />
 
       <Route path="/my-profile" element={
         <ProtectedRoute isLoggedIn={isLoggedIn} >
-          <MyProfile userData={userData} />
+          <MyProfile userData={userData} setIsLoggedIn={setIsLoggedIn} />
         </ProtectedRoute>
       } />
 
