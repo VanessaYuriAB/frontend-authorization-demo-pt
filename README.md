@@ -1,4 +1,4 @@
-# 🦆 Cryptoducks
+# Cryptoducks
 
 Um aplicativo React criado com Vite, usado como projeto educacional para demonstrar conceitos de autorização e autenticação no front-end, no bootcamp de Desenvolvimento Web da TripleTen.
 
