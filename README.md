@@ -1,12 +1,15 @@
 # Cryptoducks
 
 Aplicação front-end desenvolvida com **React** e **Vite**, criada como **projeto
-educacional** no _bootcamp de Desenvolvimento Web da TripleTen_, com foco em
-**autenticação**, **autorização** e **proteção de rotas no front-end**.
+educacional guiado** na _Sprint 17 (Autenticação e Autorização front-end) do bootcamp de
+Desenvolvimento Web da TripleTen_, com foco em **autenticação**, **autorização** e
+**proteção de rotas no front-end**.
 
 O projeto simula um aplicativo que exige login para acesso a determinadas rotas e
 funcionalidades, implementando um fluxo completo de autenticação com **JSON Web Tokens
 (JWT)**, persistência de sessão e controle de acesso baseado no estado do usuário.
+
+[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-acesse_aqui-green)](https://vanessayuriab.github.io/frontend-authorization-demo-pt/)
 
 ## 📌 Visão Geral
 
@@ -92,6 +95,12 @@ npm run dev
 ```
 
 O aplicativo estará disponível em: `http://localhost:3000`.
+
+## 🔗 Projeto Online
+
+A página está disponível via **GitHub Pages**:
+
+➜ https://vanessayuriab.github.io/frontend-authorization-demo-pt/
 
 ## 🧪 Credenciais de Teste
 
